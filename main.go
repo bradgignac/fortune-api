@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/codegangsta/cli"
-	"github.com/codegangsta/negroni"
-	"github.com/rs/cors"
+	"github.com/bradgignac/fortune-api/Godeps/_workspace/src/github.com/codegangsta/cli"
+	"github.com/bradgignac/fortune-api/Godeps/_workspace/src/github.com/codegangsta/negroni"
+	"github.com/bradgignac/fortune-api/Godeps/_workspace/src/github.com/rs/cors"
 )
 
 const name = "fortuned"

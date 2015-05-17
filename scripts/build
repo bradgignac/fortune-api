@@ -10,7 +10,6 @@ ROOT=$(dirname $SCRIPTS)
 
 PACKAGES=(
   github.com/golang/lint/golint
-  github.com/tools/godep
   golang.org/x/tools/cmd/cover
   golang.org/x/tools/cmd/godoc
   golang.org/x/tools/cmd/vet
