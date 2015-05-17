@@ -1,1 +1,1 @@
-web: fortune-api
+web: fortune-api --port $PORT
