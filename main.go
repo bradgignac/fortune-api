@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/bradgignac/fortune-api/api"
+	"github.com/bradgignac/fortune-api/fortune"
 )
 
 var addr string
@@ -23,12 +24,15 @@ func init() {
 func main() {
 	flag.Parse()
 
+	data := []string{"\"Failure is the opportunity to begin again more intelligently.\"\n  ~Henry Ford"}
+	db := fortune.NewDatabase(data)
+	api := api.NewHandler(db)
 	server := &http.Server{
 		Addr:         addr,
 		ReadTimeout:  timeout,
 		WriteTimeout: timeout,
 		IdleTimeout:  timeout,
-		Handler:      &api.Handler{},
+		Handler:      api,
 	}
 
 	go func() {
