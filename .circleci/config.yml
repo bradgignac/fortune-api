@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.9
+    working_directory: /go/src/github.com/bradgignac/fortune-api
     steps:
       - checkout
       - run: make deps
