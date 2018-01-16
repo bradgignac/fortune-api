@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 
 	"github.com/bradgignac/fortune-api/api"
@@ -24,8 +25,16 @@ func init() {
 func main() {
 	flag.Parse()
 
-	data := []string{"\"Failure is the opportunity to begin again more intelligently.\"\n  ~Henry Ford"}
-	db := fortune.NewDatabase(data)
+	data := `"Failure is the opportunity to begin again more intelligently."
+  ~Henry Ford
+%
+"one more"
+  ~Unknown`
+	db, err := fortune.Parse(strings.NewReader(data))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	api := api.NewHandler(db)
 	server := &http.Server{
 		Addr:         addr,
