@@ -37,3 +37,7 @@ func (d *Database) Random() string {
 	}
 	return keys[idx]
 }
+
+func (d *Database) Count() int {
+	return len(d.data)
+}

@@ -3,7 +3,6 @@ package fortune
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"io"
 	"strings"
 )
@@ -15,7 +14,6 @@ func Parse(r io.Reader) (*Database, error) {
 
 	for scanner.Scan() {
 		fortunes = append(fortunes, scanner.Text())
-		fmt.Printf("[fortune] %s\n", scanner.Text())
 	}
 
 	if err := scanner.Err(); err != nil {

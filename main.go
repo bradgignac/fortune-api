@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"time"
 
 	"github.com/bradgignac/fortune-api/api"
@@ -15,25 +14,29 @@ import (
 )
 
 var addr string
+var db string
 var timeout time.Duration
 
 func init() {
 	flag.StringVar(&addr, "addr", ":8000", "Address to bind to")
+	flag.StringVar(&db, "db", "", "Path to fortune database")
 	flag.DurationVar(&timeout, "timeout", time.Second*30, "HTTP request timeout")
 }
 
 func main() {
 	flag.Parse()
 
-	data := `"Failure is the opportunity to begin again more intelligently."
-  ~Henry Ford
-%
-"one more"
-  ~Unknown`
-	db, err := fortune.Parse(strings.NewReader(data))
+	reader, err := os.Open(db)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db, err := fortune.Parse(reader)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Initialized fortune database with %d fortunes", db.Count())
 
 	api := api.NewHandler(db)
 	server := &http.Server{
@@ -50,7 +53,7 @@ func main() {
 		}
 	}()
 
-	log.Printf("fortune-api is listening on %s!\n", server.Addr)
+	log.Printf("HTTP server is listening on %s", server.Addr)
 	waitForShutdown(server)
 }
 
