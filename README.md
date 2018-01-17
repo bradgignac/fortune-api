@@ -1,5 +1,7 @@
 # fortune-api
 
+[![CircleCI](https://circleci.com/gh/bradgignac/fortune-api.svg?style=svg)](https://circleci.com/gh/bradgignac/fortune-api)
+
 A HTTP API for generating fortunes, inspired by [fortune](http://en.wikipedia.org/wiki/Fortune_%28Unix%29).
 
 ## API
