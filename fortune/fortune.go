@@ -6,16 +6,18 @@ import (
 	"io"
 )
 
+// Fortune is a data structure representing a fortune.
 type Fortune struct {
-	Id   string `json:"id"`
+	ID   string `json:"id"`
 	Data string `json:"data"`
 }
 
+// NewFortune instantiates a fortune.Fortune from the provided string.
 func NewFortune(data string) Fortune {
-	return Fortune{Id: computeId(data), Data: data}
+	return Fortune{ID: computeID(data), Data: data}
 }
 
-func computeId(data string) string {
+func computeID(data string) string {
 	sha := sha1.New()
 	io.WriteString(sha, data)
 	bytes := sha.Sum(nil)
