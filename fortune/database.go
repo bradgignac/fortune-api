@@ -2,26 +2,31 @@ package fortune
 
 import (
 	"math/rand"
+
+	"github.com/juju/errors"
 )
+
+var EmptyDatabaseError = errors.New("Database is empty")
+var MissingFortuneError = errors.New("Could not find fortune with provided ID")
 
 // Database is an in-memory container for fortunes.
 type Database struct {
-	data map[string]Fortune
+	data map[string]*Fortune
 }
 
 // NewDatabase creates a fortune.Database from an array of fortunes.
 func NewDatabase(fortunes []string) *Database {
-	data := make(map[string]Fortune, len(fortunes))
+	data := make(map[string]*Fortune, len(fortunes))
 	for _, raw := range fortunes {
 		parsed := NewFortune(raw)
-		data[parsed.ID] = parsed
+		data[parsed.ID] = &parsed
 	}
 	return &Database{data: data}
 }
 
 // List returns all fortunes in the database.
-func (d *Database) List() []Fortune {
-	vals := make([]Fortune, 0)
+func (d *Database) List() []*Fortune {
+	vals := make([]*Fortune, 0)
 	for _, v := range d.data {
 		vals = append(vals, v)
 	}
@@ -29,18 +34,26 @@ func (d *Database) List() []Fortune {
 }
 
 // Get returns a single fortune from the database.
-func (d *Database) Get(id string) Fortune {
-	return d.data[id]
+func (d *Database) Get(id string) (*Fortune, error) {
+	if f, ok := d.data[id]; ok {
+		return f, nil
+	}
+
+	return nil, MissingFortuneError
 }
 
 // Random returns the ID of a random fortune in the database.
-func (d *Database) Random() string {
+func (d *Database) Random() (string, error) {
+	if len(d.data) == 0 {
+		return "", EmptyDatabaseError
+	}
+
 	idx := rand.Intn(len(d.data))
 	keys := make([]string, 0)
 	for k := range d.data {
 		keys = append(keys, k)
 	}
-	return keys[idx]
+	return keys[idx], nil
 }
 
 // Count returns the number of fortunes in the database.

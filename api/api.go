@@ -36,7 +36,7 @@ func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	id := pat.Param(r, "id")
-	fortune := h.db.Get(id)
+	fortune, _ := h.db.Get(id)
 
 	w.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
@@ -44,6 +44,6 @@ func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) random(w http.ResponseWriter, r *http.Request) {
-	id := h.db.Random()
+	id, _ := h.db.Random()
 	http.Redirect(w, r, fmt.Sprintf("/fortunes/%s", id), 302)
 }
