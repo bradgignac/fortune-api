@@ -19,6 +19,6 @@ build/fortune-api: $(SRC)
 	go build -ldflags ${LDFLAGS} -o $@ main.go
 
 test:
-	go test ./... -short
+	go test ./... -cover
 
 .PHONY: test
