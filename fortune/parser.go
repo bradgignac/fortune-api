@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Parse initializes a fortune.Database with the fortune data parsed from the provided io.Reader.
 func Parse(r io.Reader) (*Database, error) {
 	fortunes := make([]string, 0)
 	scanner := bufio.NewScanner(r)

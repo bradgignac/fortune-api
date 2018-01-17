@@ -18,7 +18,11 @@ build: build/fortune-api
 build/fortune-api: $(SRC)
 	go build -ldflags ${LDFLAGS} -o $@ main.go
 
+lint:
+	(! gofmt -e -l . | read) || (gofmt -d . && false)
+	golint -set_exit_status ./...
+
 test:
 	go test ./... -cover
 
-.PHONY: test
+.PHONY: lint test

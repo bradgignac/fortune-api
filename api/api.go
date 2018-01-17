@@ -11,11 +11,13 @@ import (
 	"goji.io/pat"
 )
 
+// Handler is an http.Handler for serving the API
 type Handler struct {
 	*goji.Mux
 	db *fortune.Database
 }
 
+// NewHandler creates an api.Handler that serves from the provided database.
 func NewHandler(db *fortune.Database) *Handler {
 	api := Handler{Mux: goji.NewMux(), db: db}
 	api.HandleFunc(pat.Get("/fortunes"), api.list)

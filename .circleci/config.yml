@@ -8,6 +8,8 @@ jobs:
       - checkout
       - run: env
       - run: go get github.com/golang/dep/cmd/dep
+      - run: go get github.com/golang/lint/golint
       - run: make deps
       - run: make build
+      - run: make lint
       - run: make test
