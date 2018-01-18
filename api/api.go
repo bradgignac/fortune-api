@@ -36,14 +36,23 @@ func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	id := pat.Param(r, "id")
-	fortune, _ := h.db.Get(id)
+	f, err := h.db.Get(id)
+	if err == fortune.ErrMissingFortune {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
-	enc.Encode(fortune)
+	enc.Encode(f)
 }
 
 func (h *Handler) random(w http.ResponseWriter, r *http.Request) {
-	id, _ := h.db.Random()
+	id, err := h.db.Random()
+	if err == fortune.ErrEmptyDatabase {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	http.Redirect(w, r, fmt.Sprintf("/fortunes/%s", id), 302)
 }

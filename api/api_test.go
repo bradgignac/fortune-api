@@ -11,6 +11,12 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+var client = &http.Client{
+	CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	},
+}
+
 var fortunes = []string{
 	"one fish, two fish",
 	"red fish, blue fish",
@@ -18,28 +24,24 @@ var fortunes = []string{
 
 type APITestSuite struct {
 	suite.Suite
-	api *Handler
-	db  *fortune.Database
-	ts  *httptest.Server
+}
+
+func initializeTestServer(fortunes []string) *httptest.Server {
+	db := fortune.NewDatabase(fortunes)
+	api := NewHandler(db)
+	return httptest.NewServer(api)
 }
 
 func TestAPITestSuite(t *testing.T) {
-	db := fortune.NewDatabase(fortunes)
-	api := NewHandler(db)
-	suite.Run(t, &APITestSuite{db: db, api: api})
-}
-
-func (s *APITestSuite) SetupSuite() {
-	s.ts = httptest.NewServer(s.api)
-}
-
-func (s *APITestSuite) TearDownSuite() {
-	s.ts.Close()
+	suite.Run(t, &APITestSuite{})
 }
 
 func (s *APITestSuite) TestListsAllFortunes() {
-	url := fmt.Sprintf("%s/fortunes", s.ts.URL)
-	res, err := http.Get(url)
+	ts := initializeTestServer(fortunes)
+	defer ts.Close()
+
+	url := fmt.Sprintf("%s/fortunes", ts.URL)
+	res, err := client.Get(url)
 
 	s.Require().Nil(err)
 	s.Equal(200, res.StatusCode)
@@ -58,9 +60,12 @@ func (s *APITestSuite) TestListsAllFortunes() {
 }
 
 func (s *APITestSuite) TestGetReturnsFortune() {
+	ts := initializeTestServer(fortunes)
+	defer ts.Close()
+
 	id := fortune.ComputeID(fortunes[0])
-	url := fmt.Sprintf("%s/fortunes/%s", s.ts.URL, id)
-	res, err := http.Get(url)
+	url := fmt.Sprintf("%s/fortunes/%s", ts.URL, id)
+	res, err := client.Get(url)
 
 	s.Require().Nil(err)
 	s.Equal(200, res.StatusCode)
@@ -76,16 +81,38 @@ func (s *APITestSuite) TestGetReturnsFortune() {
 	s.Equal(fortunes[0], data.Data)
 }
 
+func (s *APITestSuite) TestGetReturns404() {
+	ts := initializeTestServer(fortunes)
+	defer ts.Close()
+
+	url := fmt.Sprintf("%s/fortunes/invalid", ts.URL)
+	res, err := client.Get(url)
+
+	s.Require().Nil(err)
+	s.Equal(404, res.StatusCode)
+
+	res.Body.Close()
+}
+
 func (s *APITestSuite) TestRandomRedirectsToFortune() {
-	url := fmt.Sprintf("%s/random", s.ts.URL)
-	client := &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-	}
+	ts := initializeTestServer(fortunes)
+	defer ts.Close()
+
+	url := fmt.Sprintf("%s/random", ts.URL)
 	res, err := client.Get(url)
 
 	s.Require().Nil(err)
 	s.Equal(302, res.StatusCode)
 	s.Contains(res.Header.Get("Location"), "/fortunes")
+}
+
+func (s *APITestSuite) TestRandomWithEmptyDB() {
+	ts := initializeTestServer([]string{})
+	defer ts.Close()
+
+	url := fmt.Sprintf("%s/random", ts.URL)
+	res, err := client.Get(url)
+
+	s.Require().Nil(err)
+	s.Equal(404, res.StatusCode)
 }

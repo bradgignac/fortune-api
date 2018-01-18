@@ -6,8 +6,8 @@ import (
 	"github.com/juju/errors"
 )
 
-var EmptyDatabaseError = errors.New("Database is empty")
-var MissingFortuneError = errors.New("Could not find fortune with provided ID")
+var ErrEmptyDatabase = errors.New("Database is empty")
+var ErrMissingFortune = errors.New("Could not find fortune with provided ID")
 
 // Database is an in-memory container for fortunes.
 type Database struct {
@@ -39,13 +39,13 @@ func (d *Database) Get(id string) (*Fortune, error) {
 		return f, nil
 	}
 
-	return nil, MissingFortuneError
+	return nil, ErrMissingFortune
 }
 
 // Random returns the ID of a random fortune in the database.
 func (d *Database) Random() (string, error) {
 	if len(d.data) == 0 {
-		return "", EmptyDatabaseError
+		return "", ErrEmptyDatabase
 	}
 
 	idx := rand.Intn(len(d.data))

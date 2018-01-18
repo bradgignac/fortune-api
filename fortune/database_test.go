@@ -49,7 +49,7 @@ func (s *DatabaseTestSuite) TestGetReturnsErrorForMissingID() {
 	get, err := db.Get("missing")
 
 	s.Nil(get)
-	s.Equal(err, MissingFortuneError)
+	s.Equal(err, ErrMissingFortune)
 }
 
 func (s *DatabaseTestSuite) TestReturnsRandomID() {
@@ -70,7 +70,7 @@ func (s *DatabaseTestSuite) TestRandomForEmptyDatabase() {
 	random, err := db.Random()
 
 	s.Equal(random, "")
-	s.Equal(err, EmptyDatabaseError)
+	s.Equal(err, ErrEmptyDatabase)
 }
 
 func (s *DatabaseTestSuite) TestCountReturnsDatabaseLength() {
