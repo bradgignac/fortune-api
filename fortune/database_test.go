@@ -35,7 +35,7 @@ func (s *DatabaseTestSuite) TestListReturnsAllFortunes() {
 }
 
 func (s *DatabaseTestSuite) TestGetReturnsFortuneWithGivenID() {
-	id := computeID(fortunes[0])
+	id := ComputeID(fortunes[0])
 	db := NewDatabase(fortunes)
 	get, err := db.Get(id)
 
