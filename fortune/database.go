@@ -6,7 +6,10 @@ import (
 	"github.com/juju/errors"
 )
 
+// ErrEmptyDatabase is returned when an empty database is used.
 var ErrEmptyDatabase = errors.New("Database is empty")
+
+// ErrMissingFortune is returned when a fortune for the provided ID is not found.
 var ErrMissingFortune = errors.New("Could not find fortune with provided ID")
 
 // Database is an in-memory container for fortunes.

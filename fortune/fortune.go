@@ -17,6 +17,7 @@ func NewFortune(data string) Fortune {
 	return Fortune{ID: ComputeID(data), Data: data}
 }
 
+// ComputeID generates a SHA-based unique ID for a fortune.
 func ComputeID(data string) string {
 	sha := sha1.New()
 	io.WriteString(sha, data)
