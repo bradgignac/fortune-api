@@ -1,1 +1,1 @@
-web: ls -la && build/fortune-api -addr :$PORT -db support/fortunes
+web: ls -la bin && build/fortune-api -addr :$PORT -db support/fortunes
