@@ -1,4 +1,4 @@
-package db
+package data
 
 import (
 	"crypto/sha1"

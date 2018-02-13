@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/bradgignac/fortune-api/db"
+	"github.com/bradgignac/fortune-api/data"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -27,7 +27,7 @@ type APITestSuite struct {
 }
 
 func initializeTestServer(fortunes []string) *httptest.Server {
-	db := db.NewDatabase(fortunes)
+	db := data.NewDatabase(fortunes)
 	api := NewHandler(db)
 	return httptest.NewServer(api)
 }
@@ -47,7 +47,7 @@ func (s *APITestSuite) TestListsAllFortunes() {
 	s.Equal(200, res.StatusCode)
 	s.Equal("application/json", res.Header.Get("Content-Type"))
 
-	var data []db.Fortune
+	var data []data.Fortune
 	defer res.Body.Close()
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&data)
@@ -63,7 +63,7 @@ func (s *APITestSuite) TestGetReturnsFortune() {
 	ts := initializeTestServer(fortunes)
 	defer ts.Close()
 
-	id := db.ComputeID(fortunes[0])
+	id := data.ComputeID(fortunes[0])
 	url := fmt.Sprintf("%s/fortunes/%s", ts.URL, id)
 	res, err := client.Get(url)
 
@@ -72,7 +72,7 @@ func (s *APITestSuite) TestGetReturnsFortune() {
 	s.Equal("application/json", res.Header.Get("Content-Type"))
 
 	defer res.Body.Close()
-	var data db.Fortune
+	var data data.Fortune
 	dec := json.NewDecoder(res.Body)
 	err = dec.Decode(&data)
 
