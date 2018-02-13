@@ -1,4 +1,4 @@
-package fortune
+package data
 
 import (
 	"crypto/sha1"
@@ -14,10 +14,11 @@ type Fortune struct {
 
 // NewFortune instantiates a fortune.Fortune from the provided string.
 func NewFortune(data string) Fortune {
-	return Fortune{ID: computeID(data), Data: data}
+	return Fortune{ID: ComputeID(data), Data: data}
 }
 
-func computeID(data string) string {
+// ComputeID generates a SHA-based unique ID for a fortune.
+func ComputeID(data string) string {
 	sha := sha1.New()
 	io.WriteString(sha, data)
 	bytes := sha.Sum(nil)

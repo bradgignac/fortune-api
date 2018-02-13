@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/bradgignac/fortune-api/api"
-	"github.com/bradgignac/fortune-api/fortune"
+	"github.com/bradgignac/fortune-api/data"
 )
 
 var addr string
@@ -31,7 +31,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db, err := fortune.Parse(reader)
+	db, err := data.Parse(reader)
 	if err != nil {
 		log.Fatal(err)
 	}

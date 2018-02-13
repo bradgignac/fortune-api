@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/bradgignac/fortune-api/fortune"
+	"github.com/bradgignac/fortune-api/data"
 
 	"goji.io"
 	"goji.io/pat"
@@ -14,11 +14,11 @@ import (
 // Handler is an http.Handler for serving the API
 type Handler struct {
 	*goji.Mux
-	db *fortune.Database
+	db *data.Database
 }
 
 // NewHandler creates an api.Handler that serves from the provided database.
-func NewHandler(db *fortune.Database) *Handler {
+func NewHandler(db *data.Database) *Handler {
 	api := Handler{Mux: goji.NewMux(), db: db}
 	api.HandleFunc(pat.Get("/fortunes"), api.list)
 	api.HandleFunc(pat.Get("/fortunes/:id"), api.get)
@@ -36,14 +36,23 @@ func (h *Handler) list(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) get(w http.ResponseWriter, r *http.Request) {
 	id := pat.Param(r, "id")
-	fortune := h.db.Get(id)
+	f, err := h.db.Get(id)
+	if err == data.ErrMissingFortune {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
 	w.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
-	enc.Encode(fortune)
+	enc.Encode(f)
 }
 
 func (h *Handler) random(w http.ResponseWriter, r *http.Request) {
-	id := h.db.Random()
+	id, err := h.db.Random()
+	if err == data.ErrEmptyDatabase {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	http.Redirect(w, r, fmt.Sprintf("/fortunes/%s", id), 302)
 }
