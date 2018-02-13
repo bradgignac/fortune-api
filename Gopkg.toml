@@ -22,7 +22,7 @@
 
 [metadata.heroku]
   root-package = "github.com/bradgignac/fortune-api"
-  go-version = "1.9.3"
+  go-version = "1.9"
 
 [[constraint]]
   name = "goji.io"
