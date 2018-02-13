@@ -1,4 +1,4 @@
-package fortune
+package db
 
 import (
 	"bufio"
